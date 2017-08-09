@@ -2,6 +2,11 @@
 
 
 
+## Sponsors!
+![sponsors.png](media/sponsors.png)
+
+
+
 ## Agenda
 - What is React?
 - Why (not) use React?
@@ -287,6 +292,11 @@ Speaker Note:
 
 
 
+## PEP UP TECH!
+![pepuptech.png](media/pepuptech.png)
+
+
+
 ## Questions?
 ![questions.gif](media/questions.gif)
 
@@ -296,6 +306,6 @@ Speaker Note:
 
 **Roger Mitchell**
 
-Founder, Dodge Labs
+Cofounder, Bluestone Labs
 
 [@RogerMitchell](https://www.twitter.com/rogermitchell)
