@@ -1,5 +1,12 @@
 ## Building React Apps in Salesforce
 
+**Roger Mitchell**
+
+Cofounder, Bluestone Labs
+
+[@RogerMitchell](https://www.twitter.com/rogermitchell)
+
+
 
 
 ## Sponsors!
@@ -24,6 +31,7 @@ BEFORE DIVING INTO MATERIAL:
 
 
 ## What is React?
+![coder.gif](media/coder.gif)
 
 
 ## What is React?
@@ -35,12 +43,12 @@ BEFORE DIVING INTO MATERIAL:
 
 
 ## What is React?
-- Components are composed together to create an app
+- Components are composed to create an app
 - Data are stored as “state” at highest level necessary
-- Component state and functions are passed as “props”
+- Component state, functions are passed as “props”
 - Use “props” to render, execute functions
 - Only can modify state; rest of app inherits as props
-- Uses “virtual DOM” to identify changes to browser’s DOM
+- Uses “virtual DOM” to identify diffs with the DOM
 
 
 
@@ -51,18 +59,19 @@ Where's my Safe Harbor slide?
 ## Why use React?
 - Handles simple CRUD apps, data heavy pages
 - Large community of web devs + designers
-- `npm install` any packages to aid development
-- Augment your CRM dev team with your website’s dev team
-- Drop into a Visualforce page now, Lightning Component later
+- **`npm install`** any packages to aid development
+- Augment your CRM dev team with your website’s dev team or agency
+- Drop into a Visualforce page now, Lightning Component or App later
 - Keep UI the same when switching out the backend
 
 
 ## Why not use React?
-- React is not maintained by Salesforce, bugs can happen
-- Lack of “metadata awareness” when logic baked into JS
-- Existing team has learning curve, hiring is more difficult
-- Large amount of local tooling is (realistically) required
-- Requires using third party components (or building your own)
+- React is not maintained by Salesforce, bugs happen
+- Lack of “metadata awareness” when logic exists in JS
+- Existing team has learning curve
+- Hiring "framework of the day" devs is more difficult
+- Large amount of local tooling is (really) required
+- Requires using third party components available on **npm** (or building your own)
 
 
 
@@ -84,18 +93,24 @@ A journey into tooling, and treating the platform like an API.
 
 ## Metadata Model
 - Apex Controller facilitates queries, DML via RemoteAction methods
-- Visualforce Page acts as container in which to mount the app
+- Visualforce Page acts as container in which to mount the React app
 - Static Resource contains bundled components, helpers, third-party modules, etc
-- Looks similar to importing JS from a jQuery UI project
+- Looks similar to importing JS for a jQuery project
 
 
 ## Visualforce Page Markup
 ```html
-<apex:page standardStylesheets="false" showHeader="false" showChat="false" sidebar="false" controller="AccountManagementController" docType="html-5.0" applyBodyTag="false">
+<apex:page standardStylesheets="false" showHeader="false"
+	showChat="false" sidebar="false" docType="html-5.0"
+	controller="AccountManagementController"
+	applyBodyTag="false">
 <body>
-	<link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.min.css')}" />
+	<link rel="stylesheet" type="text/css"
+		href="{!URLFOR($Resource.SLDS,
+		'assets/styles/salesforce-lightning-design-system-vf.min.css')}" />
 	<div id="app" class="react-vf"></div>
-	<script type="text/javascript" src="{!URLFOR($Resource.AccountManagement, 'js/app.js')}"></script>
+	<script type="text/javascript"
+		src="{!URLFOR($Resource.AccountManagement, 'js/app.js')}"></script>
 </body>
 </apex:page>
 ```
@@ -111,7 +126,7 @@ A journey into tooling, and treating the platform like an API.
 	- Install [Webpack](https://webpack.js.org/guides/installation/) to bundle code into single asset files
 
 
-## Node Project's `package.json`
+## Node Project's package.json
 ```json
 {
   "name": "dynamic-page-mapping",
@@ -151,7 +166,8 @@ let path = require('path');
 module.exports = {
 	entry: './dev/js/App.js',
 	output: {
-		path: path.resolve(__dirname, './resource-bundles/AccountManagement.resource/js'),
+		path: path.resolve(__dirname,
+			'./resource-bundles/AccountManagement.resource/js'),
 		filename: 'app.js'
 	},
 	module: {
@@ -180,11 +196,11 @@ Because JS has advanced (too) much in the last few years.
 ## Wrapper Class for State
 - Use single request to retrieve a “StateBundle”
 - Deconstruct StateBundle into different objects/collections
-- Call `setState()` to assign data to React’s state
+- Call **`setState()`** to assign data to React’s state
 - Return StateBundle back after DML, repeat deconstruction
 
 
-## Constructing `StateBundle` in Apex
+## Constructing StateBundle in Apex
 ```java
 global class StateBundle
 {
@@ -195,7 +211,7 @@ global class StateBundle
 ```
 
 
-## Parsing `StateBundle` in Client Side JS
+## Parsing StateBundle in Client Side JS
 ```js
 export function getInitialState(recordId, context) {
 	Visualforce.remoting.Manager.invokeAction(
@@ -228,44 +244,50 @@ export function getInitialState(recordId, context) {
 ```
 
 
-## Redirecting to `localhost`
+## Redirecting to localhost
 - Serve app to localhost using [webpack-dev-server](https://webpack.github.io/docs/webpack-dev-server.html)
 - Redirect browser requests to localhost using [Requestly](http://www.requestly.in/)
 - Prevent deploying static resource bundle
 - Speed up your development cycles
 
 
-## Redirecting to `localhost`
-Start webpack-dev-server via Terminal...
+## Redirecting to localhost
+Start **`webpack-dev-server`** via Terminal...
 ```
-webpack-dev-server --content-base resource-	bundles/YourResourceName.resource --https
+webpack-dev-server --content-base 
+resource-bundles/YourResourceName.resource --https
 ```
 
 Using Requestly, replace...
-	`/https.*\/resource\/[0-9]+\/YourResourceName/ig`
+```
+/https.*\/resource\/[0-9]+\/YourResourceName/ig
+```
 with...
-	`https://localhost:8080`
+```
+https://localhost:8080
+```
 
 
 ## Metadata Driven Rendering
 - Abstract app further with smaller components
-- Use Field Sets and Custom Metadata Types to allow
-- non-developers to control UI features
+- Use Field Sets and Custom Metadata Types to allow non-developers to control UI features
 - Describe fields to support i18n and custom translations
 - Leverage [FieldSetReactor](https://github.com/rogeramitchell/FieldSetReactor) as utility to compose server-side details, serve with app’s StateBundle (i.e. app data)
 
 
-## Incorporating Field Sets with `FieldSetReactor`
+## Use Field Sets with Field Set Reactor
 ```java
 @RemoteAction
-public static List<FieldSetReactor.FieldDetails> getFields(String fieldSetName, String objectName)
+public static List<FieldSetReactor.FieldDetails> getFields(
+	String fieldSetName,
+	String objectName)
 {
-return FieldSetReactor.getFieldDetails(fieldSetName, objectName);
+	return FieldSetReactor.getFieldDetails(fieldSetName, objectName);
 }
 ```
 
 
-## Field Details from `FieldSetReactor`
+## Field Details from Field Set Reactor
 ![field-set-details.png](media/field-set-details.png)
 
 
